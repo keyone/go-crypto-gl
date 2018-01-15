@@ -11,12 +11,7 @@ func main() {
 	// Timer to evaluate how fast the application is
 	start := time.Now()
 
-	// We are getting the total number of active currencies from the Global endpoint.
-	activeCurrencies := api.GetActiveCurrencies()
-
-	// TODO: We get an array of all currencies with their percent changes
-	// from this endpoing: https://api.coinmarketcap.com/v1/ticker/?limit=902
-	coins := api.GetAllCoins(activeCurrencies)
+	coins := api.GetAllCoins(2000)
 	fmt.Printf("%#v\n", coins)
 
 	// elapsed timer

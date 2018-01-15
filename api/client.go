@@ -29,8 +29,8 @@ func GetActiveCurrencies() int64 {
 }
 
 // GetAllCoins total
-func GetAllCoins(activeCurrencies int64) (coins []models.Coin) {
-	resp, err := http.Get("https://api.coinmarketcap.com/v1/ticker/?limit=" + strconv.FormatInt(activeCurrencies, 10))
+func GetAllCoins(limit int64) (coins []models.Coin) {
+	resp, err := http.Get("https://api.coinmarketcap.com/v1/ticker/?limit=" + strconv.FormatInt(limit, 10))
 	if err != nil {
 		log.Fatal("Cannot access Api")
 	}

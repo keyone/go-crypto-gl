@@ -23,6 +23,14 @@ type Coin struct {
 	LastUpdated      time.Time
 }
 
+// ByPercentChange1H implements sort.Interface for []Coin based
+// on the PercentChange1H field. https://golang.org/pkg/sort/
+// TODO:
+type ByPercentChange1H []Coin
+
+// Len method of sort.Interface
+func (p1h ByPercentChange1H) Len() int { return len(p1h) }
+
 // JSONCoin struct
 // This idea comes from:  https://blog.gopheracademy.com/advent-2016/advanced-encoding-decoding/
 type JSONCoin struct {
