@@ -1,4 +1,4 @@
-package models
+package coin
 
 import (
 	"encoding/json"
@@ -78,4 +78,9 @@ func (c *Coin) UnmarshalJSON(b []byte) error {
 	}
 	*c = jc.Coin()
 	return nil
+}
+
+// Globals struct is mapping the /global endpoint
+type Globals struct {
+	ActiveCurrencies int64 `json:"active_currencies"`
 }

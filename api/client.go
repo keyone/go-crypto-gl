@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/keyone/go-crypto-gl/models"
+	"github.com/keyone/go-crypto-gl/coin"
 )
 
 // GetActiveCurrencies function returns total nomber of active currencies
@@ -21,7 +21,7 @@ func GetActiveCurrencies() int64 {
 	if ioerr != nil {
 		log.Fatal("Cannot read response")
 	}
-	g := new(models.Globals)
+	g := new(coin.Globals)
 	if err := json.Unmarshal(body, &g); err != nil {
 		log.Fatal("Cannot unmarshal JSON")
 	}
@@ -29,7 +29,7 @@ func GetActiveCurrencies() int64 {
 }
 
 // GetAllCoins total
-func GetAllCoins(limit int64) (coins []models.Coin) {
+func GetAllCoins(limit int64) (coins []coin.Coin) {
 	resp, err := http.Get("https://api.coinmarketcap.com/v1/ticker/?limit=" + strconv.FormatInt(limit, 10))
 	if err != nil {
 		log.Fatal("Cannot access Api")
