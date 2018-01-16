@@ -13,13 +13,18 @@ func main() {
 	// Timer to evaluate how fast the application is
 	start := time.Now()
 	fmt.Println("*****************************************")
-	fmt.Println("*** Top 10 Gainers in the past 1 hour ***")
+	fmt.Println("*** Top 10 Gainers in the past 1 hour with MarketCap Non Null ***")
 	fmt.Println("*****************************************")
 
-	fmt.Printf("%s\t%s\t%s\t\t%s\n", "Rank", "Symbol", "Price", "PercentChange1H")
+	fmt.Printf("%s\t%s\t%s\t\t%s\t%s\n", "Rank", "Symbol", "Price", "change1h", "MarketCAP")
 
 	for _, coin := range coin.ByDecreasingPercentChange1H(api.GetAllCoins(1500)) {
-		fmt.Printf("%d\t%s\t$%.5f\t%.2f%%\n", coin.Rank, coin.Symbol, coin.PriceUSD, coin.PercentChange1H)
+		fmt.Printf("%d\t%s\t$ %.4f\t%.4f%%\t$ %.2f\n",
+			coin.Rank,
+			coin.Symbol,
+			coin.PriceUSD,
+			coin.PercentChange1H,
+			coin.MarketCapUSD)
 	}
 
 	// elapsed timer

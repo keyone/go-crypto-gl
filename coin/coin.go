@@ -85,11 +85,23 @@ func orderedBy(less ...lessFunc) *multiSorter {
 
 // ByDecreasingPercentChange1H sorts by percent change in 1 hour
 func ByDecreasingPercentChange1H(coins []Coin) []Coin {
+	// remove null market cap from coins
+	coins = removeNullMarketCap(coins)
 	decreasingPercentChange1H := func(c1, c2 *Coin) bool {
 		return c1.PercentChange1H > c2.PercentChange1H // Note: > orders downwards.
 	}
+
 	orderedBy(decreasingPercentChange1H).Sort(coins)
 	return coins[0:10]
+}
+
+func removeNullMarketCap(coins []Coin) (purgedCoins []Coin) {
+	for _, coin := range coins {
+		if coin.MarketCapUSD != 0 {
+			purgedCoins = append(purgedCoins, coin)
+		}
+	}
+	return
 }
 
 // JSONCoin struct

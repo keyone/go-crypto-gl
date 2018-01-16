@@ -35,10 +35,12 @@ func GetAllCoins(limit int64) (coins []coin.Coin) {
 		log.Fatal("Cannot access Api")
 	}
 	defer resp.Body.Close()
+
 	coinsBody, ioerr := ioutil.ReadAll(resp.Body)
 	if ioerr != nil {
 		log.Fatal("Cannot read response")
 	}
+
 	if err := json.Unmarshal(coinsBody, &coins); err != nil {
 		log.Fatal("Cannot unmarshal Coins JSON")
 	}
