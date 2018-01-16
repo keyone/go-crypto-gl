@@ -2,6 +2,7 @@ package coin
 
 import (
 	"encoding/json"
+	"sort"
 	"time"
 )
 
@@ -23,13 +24,73 @@ type Coin struct {
 	LastUpdated      time.Time
 }
 
-// ByPercentChange1H implements sort.Interface for []Coin based
-// on the PercentChange1H field. https://golang.org/pkg/sort/
-// TODO:
-type ByPercentChange1H []Coin
+// multiSorter implements the Sort interface, sorting the changes within.
+// code from: https://golang.org/pkg/sort/
+type multiSorter struct {
+	coins []Coin
+	less  []lessFunc
+}
 
-// Len method of sort.Interface
-func (p1h ByPercentChange1H) Len() int { return len(p1h) }
+// Len is part of sort.Interface.
+func (ms *multiSorter) Len() int {
+	return len(ms.coins)
+}
+
+// Sort sorts the argument slice according to the less functions passed to OrderedBy.
+func (ms *multiSorter) Sort(coins []Coin) {
+	ms.coins = coins
+	sort.Sort(ms)
+}
+
+// Swap is part of sort.Interface.
+func (ms *multiSorter) Swap(i, j int) {
+	ms.coins[i], ms.coins[j] = ms.coins[j], ms.coins[i]
+}
+
+// Less is part of sort.Interface. It is implemented by looping along the
+// less functions until it finds a comparison that is either Less or
+// !Less. Note that it can call the less functions twice per call. We
+// could change the functions to return -1, 0, 1 and reduce the
+// number of calls for greater efficiency: an exercise for the reader.
+func (ms *multiSorter) Less(i, j int) bool {
+	p, q := &ms.coins[i], &ms.coins[j]
+	// Try all but the last comparison.
+	var k int
+	for k = 0; k < len(ms.less)-1; k++ {
+		less := ms.less[k]
+		switch {
+		case less(p, q):
+			// p < q, so we have a decision.
+			return true
+		case less(q, p):
+			// p > q, so we have a decision.
+			return false
+		}
+		// p == q; try the next comparison.
+	}
+	// All comparisons to here said "equal", so just return whatever
+	// the final comparison reports.
+	return ms.less[k](p, q)
+}
+
+type lessFunc func(p1, p2 *Coin) bool
+
+// OrderedBy returns a Sorter that sorts using the less functions, in order.
+// Call its Sort method to sort the data.
+func orderedBy(less ...lessFunc) *multiSorter {
+	return &multiSorter{
+		less: less,
+	}
+}
+
+// ByDecreasingPercentChange1H sorts by percent change in 1 hour
+func ByDecreasingPercentChange1H(coins []Coin) []Coin {
+	decreasingPercentChange1H := func(c1, c2 *Coin) bool {
+		return c1.PercentChange1H > c2.PercentChange1H // Note: > orders downwards.
+	}
+	orderedBy(decreasingPercentChange1H).Sort(coins)
+	return coins[0:10]
+}
 
 // JSONCoin struct
 // This idea comes from:  https://blog.gopheracademy.com/advent-2016/advanced-encoding-decoding/
